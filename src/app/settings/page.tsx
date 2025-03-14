@@ -15,7 +15,6 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
-import DatabaseMigration from "./database-migration";
 
 interface RestaurantSettings {
   name: string;
@@ -180,7 +179,7 @@ export default function SettingsPage() {
 
   const handleRestaurantChange = (
     field: keyof RestaurantSettings,
-    value: any
+    value: string | number | boolean,
   ) => {
     setRestaurantSettings((prev) => ({
       ...prev,
@@ -188,7 +187,10 @@ export default function SettingsPage() {
     }));
   };
 
-  const handleAppChange = (field: keyof AppSettings, value: any) => {
+  const handleAppChange = (
+    field: keyof AppSettings,
+    value: string | number | boolean,
+  ) => {
     setAppSettings((prev) => ({
       ...prev,
       [field]: value,
@@ -198,18 +200,17 @@ export default function SettingsPage() {
   const handleTipPercentageChange = (index: number, value: string) => {
     const newPercentages = [...restaurantSettings.defaultTipPercentages];
     newPercentages[index] = Number.parseInt(value) || 0;
-    handleRestaurantChange("defaultTipPercentages", newPercentages);
+    handleRestaurantChange("defaultTipPercentages", newPercentages as any);
   };
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Settings</h1>
+      <h1 className="mb-6 text-3xl font-bold">Settings</h1>
 
       <Tabs defaultValue="restaurant">
         <TabsList className="mb-6">
           <TabsTrigger value="restaurant">Restaurant</TabsTrigger>
           <TabsTrigger value="application">Application</TabsTrigger>
-          <TabsTrigger value="database">Database</TabsTrigger>
           <TabsTrigger value="data">Data Management</TabsTrigger>
         </TabsList>
 
@@ -266,7 +267,7 @@ export default function SettingsPage() {
                   onChange={(e) =>
                     handleRestaurantChange(
                       "taxRate",
-                      Number.parseFloat(e.target.value) || 0
+                      Number.parseFloat(e.target.value) || 0,
                     )
                   }
                 />
@@ -278,7 +279,7 @@ export default function SettingsPage() {
                   <Switch
                     id="enable-tips"
                     checked={restaurantSettings.enableTips}
-                    onCheckedChange={(checked) =>
+                    onCheckedChange={(checked: boolean) =>
                       handleRestaurantChange("enableTips", checked)
                     }
                   />
@@ -299,7 +300,7 @@ export default function SettingsPage() {
                               }
                             />
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -331,7 +332,7 @@ export default function SettingsPage() {
                 <Switch
                   id="dark-mode"
                   checked={appSettings.darkMode}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleAppChange("darkMode", checked)
                   }
                 />
@@ -342,7 +343,7 @@ export default function SettingsPage() {
                 <Switch
                   id="compact-mode"
                   checked={appSettings.compactMode}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     handleAppChange("compactMode", checked)
                   }
                 />
@@ -370,10 +371,6 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="database">
-          <DatabaseMigration />
-        </TabsContent>
-
         <TabsContent value="data">
           <Card>
             <CardHeader>
@@ -384,8 +381,8 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h3 className="text-lg font-medium mb-2">Export Data</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h3 className="mb-2 text-lg font-medium">Export Data</h3>
+                <p className="mb-4 text-sm text-muted-foreground">
                   Export all your POS data for backup or migration purposes.
                 </p>
                 <Button
@@ -425,8 +422,8 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <h3 className="text-lg font-medium mb-2">Reset Data</h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <h3 className="mb-2 text-lg font-medium">Reset Data</h3>
+                <p className="mb-4 text-sm text-muted-foreground">
                   Warning: This will permanently delete all your POS data from
                   browser storage.
                 </p>
@@ -435,7 +432,7 @@ export default function SettingsPage() {
                   onClick={() => {
                     if (
                       confirm(
-                        "Are you sure you want to reset all local data? This action cannot be undone."
+                        "Are you sure you want to reset all local data? This action cannot be undone.",
                       )
                     ) {
                       localStorage.removeItem("menuItems");

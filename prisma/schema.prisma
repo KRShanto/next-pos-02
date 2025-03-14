@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // You can change this to mysql, sqlite, sqlserver, etc.
+  url      = env("DATABASE_URL")
+}
+
+// Menu items
+model MenuItem {
+  id             String           @id @default(cuid())
+  name           String
+  price          Float
+  category       String
+  description    String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  orderItems     OrderItem[]
+  inventoryUsage InventoryUsage[]
+}
+
+// Customers
+model Customer {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?   @unique
+  phone         String?
+  address       String?
+  loyaltyPoints Int       @default(0)
+  joinDate      DateTime  @default(now())
+  notes         String?
+  orders        Order[]
+  invoices      Invoice[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+// Tables
+model Table {
+  id               String    @id @default(cuid())
+  name             String
+  capacity         Int
+  status           String // available, occupied, reserved, cleaning
+  currentOrderId   String?
+  assignedServerId String?
+  reservationTime  DateTime?
+  reservationName  String?
+  orders           Order[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  assignedServer Employee? @relation(fields: [assignedServerId], references: [id])
+}
+
+// Employees/Servers
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  role      String // server, manager, chef, etc.
+  email     String?  @unique
+  phone     String?
+  pin       String? // For login purposes
+  tables    Table[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Orders
+model Order {
+  id            String      @id @default(cuid())
+  items         OrderItem[]
+  total         Float
+  status        String // pending, completed, cancelled
+  paymentMethod String?
+  tip           Float?
+  customerId    String?
+  tableId       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  customer Customer? @relation(fields: [customerId], references: [id])
+  table    Table?    @relation(fields: [tableId], references: [id])
+  invoice  Invoice?
+}
+
+// Order Items (junction table between Order and MenuItem)
+model OrderItem {
+  id         String @id @default(cuid())
+  orderId    String
+  menuItemId String
+  quantity   Int
+  price      Float // Store price at time of order
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@index([orderId])
+  @@index([menuItemId])
+}
+
+// Invoices
+model Invoice {
+  id         String   @id @default(cuid())
+  orderId    String?  @unique
+  customerId String
+  subtotal   Float
+  taxRate    Float
+  taxAmount  Float
+  total      Float
+  status     String // draft, sent, paid, overdue
+  issueDate  DateTime
+  dueDate    DateTime
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  order    Order?   @relation(fields: [orderId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+}
+
+// Inventory Items
+model InventoryItem {
+  id            String           @id @default(cuid())
+  name          String
+  category      String
+  quantity      Float
+  unit          String // kg, liters, units, etc.
+  minQuantity   Float
+  cost          Float
+  supplier      String?
+  lastRestocked DateTime         @default(now())
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  usages        InventoryUsage[]
+}
+
+// Inventory Usage (tracks which menu items use which inventory items)
+model InventoryUsage {
+  id              String @id @default(cuid())
+  inventoryItemId String
+  menuItemId      String
+  quantityPerItem Float // How much of this inventory item is used per menu item
+
+  inventoryItem InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  menuItem      MenuItem      @relation(fields: [menuItemId], references: [id])
+
+  @@index([inventoryItemId])
+  @@index([menuItemId])
+}
+
+// Restaurant Settings
+model RestaurantSettings {
+  id                    String   @id @default(cuid())
+  name                  String
+  address               String?
+  phone                 String?
+  taxRate               Float    @default(8.5)
+  enableTips            Boolean  @default(true)
+  defaultTipPercentages Json? // Stored as JSON array [15, 18, 20]
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// App Settings
+model AppSettings {
+  id            String   @id @default(cuid())
+  darkMode      Boolean  @default(false)
+  compactMode   Boolean  @default(false)
+  receiptFooter String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Settings {
+  id                 String   @id
+  restaurantSettings Json
+  appSettings        Json
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

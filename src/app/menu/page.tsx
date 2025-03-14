@@ -34,7 +34,7 @@ export default function MenuPage() {
 
         // Extract unique categories
         const uniqueCategories = Array.from(
-          new Set(data.map((item: MenuItem) => item.category))
+          new Set(data.map((item: MenuItem) => item.category)),
         );
         setCategories(uniqueCategories as string[]);
       } catch (error) {
@@ -52,7 +52,7 @@ export default function MenuPage() {
 
       // Extract unique categories
       const uniqueCategories = Array.from(
-        new Set(items.map((item) => item.category))
+        new Set(items.map((item) => item.category)),
       );
       setCategories(uniqueCategories as string[]);
 
@@ -131,7 +131,7 @@ export default function MenuPage() {
     }
 
     const updatedItems = menuItems.map((item) =>
-      item.id === updatedItem.id ? (updatedItem as MenuItem) : item
+      item.id === updatedItem.id ? (updatedItem as MenuItem) : item,
     );
 
     saveMenuItems(updatedItems);
@@ -160,15 +160,15 @@ export default function MenuPage() {
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase())
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
     <div className="container mx-auto py-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-3xl font-bold">Menu Management</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Add, edit, and organize your menu items
           </p>
         </div>
@@ -179,7 +179,7 @@ export default function MenuPage() {
 
       <div className="mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             className="pl-10"
             placeholder="Search menu items..."
@@ -231,7 +231,7 @@ export default function MenuPage() {
         </TabsList>
 
         <TabsContent value="all">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredItems.map((item) => (
               <MenuItemCard
                 key={item.id}
@@ -245,7 +245,7 @@ export default function MenuPage() {
 
         {categories.map((category) => (
           <TabsContent key={category} value={category}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredItems
                 .filter((item) => item.category === category)
                 .map((item) => (
@@ -274,19 +274,19 @@ function MenuItemCard({
   onDelete: () => void;
 }) {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card className="overflow-hidden transition-shadow hover:shadow-md">
       <CardContent className="p-6">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-bold text-lg">{item.name}</h3>
-            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+            <h3 className="text-lg font-bold">{item.name}</h3>
+            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
               {item.description}
             </p>
             <div className="mt-2 flex items-center gap-2">
-              <span className="font-medium text-lg">
+              <span className="text-lg font-medium">
                 ${item.price.toFixed(2)}
               </span>
-              <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
+              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
                 {item.category}
               </span>
             </div>

@@ -96,8 +96,8 @@ export function MainNav() {
   ];
 
   return (
-    <nav className="flex items-center space-x-2 lg:space-x-4 mx-4">
-      <div className="font-bold text-lg mr-4 hidden sm:block">
+    <nav className="mx-4 flex items-center space-x-2 lg:space-x-4">
+      <div className="mr-4 hidden text-lg font-bold sm:block">
         RestaurantPOS
       </div>
 
@@ -115,7 +115,7 @@ export function MainNav() {
               "flex items-center text-sm font-medium transition-colors",
               route.active
                 ? "text-primary-foreground"
-                : "text-muted-foreground hover:text-primary"
+                : "text-muted-foreground hover:text-primary",
             )}
           >
             <route.icon className="mr-2 h-4 w-4" />
@@ -127,7 +127,7 @@ export function MainNav() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="h-9">
-            <MenuIcon className="h-4 w-4 mr-2" />
+            <MenuIcon className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">More</span>
           </Button>
         </DropdownMenuTrigger>

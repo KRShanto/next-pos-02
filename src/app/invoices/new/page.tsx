@@ -51,7 +51,7 @@ export default function NewInvoicePage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>(
-    preselectedCustomerId || ""
+    preselectedCustomerId || "",
   );
   const [invoiceItems, setInvoiceItems] = useState<InvoiceItem[]>([]);
   const [notes, setNotes] = useState<string>("Thank you for your business!");
@@ -100,7 +100,7 @@ export default function NewInvoicePage() {
   const updateInvoiceItem = (
     id: string,
     field: keyof InvoiceItem,
-    value: any
+    value: any,
   ) => {
     setInvoiceItems((prevItems) =>
       prevItems.map((item) => {
@@ -115,7 +115,7 @@ export default function NewInvoicePage() {
           return updatedItem;
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -133,7 +133,7 @@ export default function NewInvoicePage() {
         "total",
         menuItem.price *
           (invoiceItems.find((item) => item.id === invoiceItemId)?.quantity ||
-            1)
+            1),
       );
     }
   };
@@ -191,7 +191,7 @@ export default function NewInvoicePage() {
 
     // Check if all items have descriptions and prices
     const invalidItems = invoiceItems.filter(
-      (item) => !item.description || item.unitPrice <= 0
+      (item) => !item.description || item.unitPrice <= 0,
     );
     if (invalidItems.length > 0) {
       toast({
@@ -247,7 +247,7 @@ export default function NewInvoicePage() {
 
   return (
     <div className="container mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold">Create New Invoice</h1>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={() => saveInvoice("draft")}>
@@ -261,7 +261,7 @@ export default function NewInvoicePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -287,7 +287,7 @@ export default function NewInvoicePage() {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="issueDate">Issue Date</Label>
                   <Input
@@ -309,7 +309,7 @@ export default function NewInvoicePage() {
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-4">
+                <div className="mb-4 flex items-center justify-between">
                   <h3 className="font-medium">Invoice Items</h3>
                   <Button variant="outline" size="sm" onClick={addInvoiceItem}>
                     <Plus className="mr-2 h-4 w-4" />
@@ -318,16 +318,16 @@ export default function NewInvoicePage() {
                 </div>
 
                 {invoiceItems.length === 0 ? (
-                  <div className="text-center py-8 border rounded-md text-muted-foreground">
-                    No items added. Click "Add Item" to start building your
-                    invoice.
+                  <div className="rounded-md border py-8 text-center text-muted-foreground">
+                    No items added. Click &quot;Add Item&quot; to start building
+                    your invoice.
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {invoiceItems.map((item, index) => (
                       <div
                         key={item.id}
-                        className="grid grid-cols-12 gap-2 items-end"
+                        className="grid grid-cols-12 items-end gap-2"
                       >
                         <div className="col-span-12 md:col-span-5">
                           <Label
@@ -344,7 +344,7 @@ export default function NewInvoicePage() {
                                 updateInvoiceItem(
                                   item.id,
                                   "description",
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               placeholder="Item description"
@@ -386,7 +386,7 @@ export default function NewInvoicePage() {
                               updateInvoiceItem(
                                 item.id,
                                 "quantity",
-                                Number.parseInt(e.target.value) || 1
+                                Number.parseInt(e.target.value) || 1,
                               )
                             }
                           />
@@ -408,7 +408,7 @@ export default function NewInvoicePage() {
                               updateInvoiceItem(
                                 item.id,
                                 "unitPrice",
-                                Number.parseFloat(e.target.value) || 0
+                                Number.parseFloat(e.target.value) || 0,
                               )
                             }
                             placeholder="0.00"
@@ -430,7 +430,7 @@ export default function NewInvoicePage() {
                             />
                           </div>
                         </div>
-                        <div className="col-span-2 md:col-span-1 flex justify-end">
+                        <div className="col-span-2 flex justify-end md:col-span-1">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -470,7 +470,7 @@ export default function NewInvoicePage() {
                 <span className="text-muted-foreground">Subtotal:</span>
                 <span>${calculateSubtotal().toFixed(2)}</span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Tax Rate:</span>
                   <Input
@@ -481,13 +481,13 @@ export default function NewInvoicePage() {
                     onChange={(e) =>
                       setTaxRate(Number.parseFloat(e.target.value) || 0)
                     }
-                    className="w-16 h-8 text-right"
+                    className="h-8 w-16 text-right"
                   />
                   <span className="text-muted-foreground">%</span>
                 </div>
                 <span>${calculateTaxAmount().toFixed(2)}</span>
               </div>
-              <div className="pt-4 border-t flex justify-between font-bold text-lg">
+              <div className="flex justify-between border-t pt-4 text-lg font-bold">
                 <span>Total:</span>
                 <span>${calculateTotal().toFixed(2)}</span>
               </div>
